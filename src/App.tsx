@@ -1,26 +1,63 @@
 import React, { Component } from 'react';
 import Card from './Card';
 import Grid from '@material-ui/core/Grid'
-import logo from './logo.svg';
-import myimg from './test.png';
+//import logo from './logo.svg';
+//import myimg from './test.png';
 import './App.css';
 import { IUser } from './interfaces';
 
+class Flavors{
+  public Options: string[] = ["French Roast", "Vanilla Nut", "Cherry", "Oak", "Mango"];
+  public Selected: string[] = [];
+  public Count: number = 0;
+
+  public Choose = 3;
+
+  private Flavors(){
+    this.Count = this.Options.length;
+  }
+
+  public add(option: string): boolean{
+    var success = true;
+
+    if(this.Selected.length >= this.Choose){
+      alert("You may only choose "+ this.Choose + " flavor(s). Please unselect a flavor to choose another.")
+      success =  false;
+    }
+    else{
+      this.Selected.push(option);
+      success =  true;
+    }
+    console.log("Flavor.add("+option+") - "+this.Selected.toString());
+    return success;
+  }
+
+  public remove(option: string): boolean{
+    var success = true;
+    if(this.Selected.length <= 0){
+      success =  false;
+    }
+    else{   
+      var index = this.Selected.indexOf(option);
+      this.Selected.splice(index, 1);
+      
+      if(index == -1)success =  false;
+      else success = true;
+    }
+    console.log("Flavor.remove("+option+") - "+this.Selected.toString());
+    return success;
+  }
+}
 
 class App extends Component {
 
-  private users: IUser[] = [];
+  public Flavors: Flavors = new Flavors();
 
   constructor(props:any){
     super(props);
-
-    for(let i = 0; i < 5; i++){
-      this.users.push({
-        id: i,
-        name: "user_" + this.randomString(10),
-        description: "description_"+this.randomString(10)
-      });
-    }
+    
+    this.add = this.add.bind(this);
+    this.remove = this.remove.bind(this);
   }
 
   private randomString(length: number): string {
@@ -38,14 +75,30 @@ class App extends Component {
     console.log("card clicked: id "+id.toString());
   }
 
+  private add(name:string): boolean{
+    return this.Flavors.add(name);
+  }
+
+  private remove(name:string): boolean{
+    return this.Flavors.remove(name);
+  }
+
   render() {
+    var parent = this;
+
+    var options = this.Flavors.Options.map(function(flavor){
+      return(
+        <Card remove={parent.remove} add={parent.add} imgSource="" name={flavor} ></Card>
+      )
+    });
 
     return (
       <Grid container>   
-          <Card imgSource={myimg} user={this.users[0]} onClick={this.onClick}></Card>
+        {options}
       </Grid>
     );
   }
+
 }
 
 export default App;

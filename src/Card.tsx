@@ -2,18 +2,15 @@ import React, { Component } from 'react';
 import Grid from '@material-ui/core/Grid'
 import { IUser } from './interfaces';
 
-
-
 interface ICardProps{
     imgSource: string,
-    user: IUser,
-    onClick(id:number): void;
+    name: string,
+    add(name: string): boolean,
+    remove(name: string): boolean
 }
+
 class Card extends Component<ICardProps> {
   
-  max:number = 3;
-  min:number = 0;
-
   state = {
     clickCount:0,
     active: false
@@ -28,47 +25,57 @@ class Card extends Component<ICardProps> {
   }
 
   handleClick(e:any){
+    
+    var currentState = this.state.active;
+    var currentClickCount = this.state.clickCount;
+
     this.setState({
       active: !this.state.active
     })  
 
-    if(!this.state.active){
+    if(currentState){
       this.setState({
         clickCount: 0
-      })
+      });
+      for(var i =0; i < currentClickCount; i++){
+        this.props.remove(this.props.name);
+      }
+      
     }
     else{
       this.setState({
         clickCount:1
-      })
+      });
+
+      this.props.add(this.props.name);
     }
   }
 
   incrementClickCount(e:any){
-    e.stopPropagation();
-    if(this.state.clickCount >= this.max) {
-      alert("you may only have "+this.max +" selections");
-      return;
-    }
+      e.stopPropagation();
 
-      this.setState({
-        clickCount: this.state.clickCount+1
-      });
+      if(this.props.add(this.props.name)){
+        this.setState({
+          clickCount: this.state.clickCount+1
+        });
+      }
   }
 
   decrementClickCount(e:any){
     e.stopPropagation();
-    if(this.state.clickCount <= this.min+1) {
+
+    if(this.state.clickCount <= 1) {
       this.setState({
         active: false
       })  
-  
       return;
     }
 
-    this.setState({
-      clickCount: this.state.clickCount-1
-    })
+    if(this.props.remove(this.props.name)){
+      this.setState({
+        clickCount: this.state.clickCount-1
+      })
+    }
   }
 
   stopProp(e:any){
@@ -76,7 +83,6 @@ class Card extends Component<ICardProps> {
   }
 
   render() {
-    let user: IUser = this.props.user;
     return (
       <div className={this.state.active ? "variant active" : "variant"} onClick={this.handleClick}>
           {/* <img className="variantImage" src={this.props.imgSource} alt=""/> */}

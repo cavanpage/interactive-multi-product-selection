@@ -12,3 +12,33 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.variant{
+  position:relative;
+  width:150px;
+  height:150px;
+  cursor: pointer;
+  border: 1px solid;
+}
+
+.clickCountDiv{
+  position: absolute;
+  bottom:0;
+  right:0;
+
+  -webkit-user-select: none; /* Safari */        
+-moz-user-select: none; /* Firefox */
+-ms-user-select: none; /* IE10+/Edge */
+user-select: none; /* Standard */
+}
+
+.variantImage{
+  max-width:100%;
+  max-height:100%;
+}
+
+
+.active{
+  background-color: aquamarine;
+}
+

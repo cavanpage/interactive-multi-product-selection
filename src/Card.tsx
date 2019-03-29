@@ -29,10 +29,6 @@ class Card extends Component<ICardProps> {
     var currentState = this.state.active;
     var currentClickCount = this.state.clickCount;
 
-    this.setState({
-      active: !this.state.active
-    })  
-
     if(currentState){
       this.setState({
         clickCount: 0
@@ -40,6 +36,9 @@ class Card extends Component<ICardProps> {
       for(var i =0; i < currentClickCount; i++){
         this.props.remove(this.props.name);
       }
+      this.setState({
+        active: !this.state.active
+      })  
       
     }
     else{
@@ -47,7 +46,11 @@ class Card extends Component<ICardProps> {
         clickCount:1
       });
 
-      this.props.add(this.props.name);
+      if(this.props.add(this.props.name)){
+        this.setState({
+          active: !this.state.active
+        })  
+      }
     }
   }
 
@@ -86,6 +89,7 @@ class Card extends Component<ICardProps> {
     return (
       <div className={this.state.active ? "variant active" : "variant"} onClick={this.handleClick}>
           {/* <img className="variantImage" src={this.props.imgSource} alt=""/> */}
+          <div>{this.props.name}</div>
           { this.state.active ?
           <div className="clickCountDiv" >
             <span className="minus" onClick={this.decrementClickCount}>-</span>

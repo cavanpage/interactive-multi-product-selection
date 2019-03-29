@@ -53,6 +53,10 @@ class App extends Component {
 
   public Flavors: Flavors = new Flavors();
 
+  state= {
+    flavors: Flavors
+  }
+
   constructor(props:any){
     super(props);
     
@@ -76,11 +80,20 @@ class App extends Component {
   }
 
   private add(name:string): boolean{
-    return this.Flavors.add(name);
+    var isSuccess = this.Flavors.add(name);
+    this.setState({
+      flavors: Flavors
+    })
+
+    return isSuccess
   }
 
   private remove(name:string): boolean{
-    return this.Flavors.remove(name);
+    var isSuccess = this.Flavors.remove(name);
+    this.setState({
+      flavors: Flavors
+    })
+    return isSuccess;
   }
 
   render() {
@@ -92,10 +105,23 @@ class App extends Component {
       )
     });
 
+    var selectedOptions = this.Flavors.Selected.map(function(flavor:string){
+      return(
+        <div>{flavor}<b><span onClick={e => parent.remove(flavor)}> - </span></b></div>
+      )
+    });
+
     return (
-      <Grid container>   
-        {options}
+      <Grid container direction="row">   
+        <Grid xs={12} container >
+          {options}
+        </Grid>
+        <Grid>
+          <div>Selected Flavors:</div>
+          {selectedOptions}
+        </Grid>
       </Grid>
+     
     );
   }
 

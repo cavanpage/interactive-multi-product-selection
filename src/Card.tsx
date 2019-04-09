@@ -71,7 +71,6 @@ class Card extends Component<ICardProps> {
       this.setState({
         active: false
       })  
-      return;
     }
 
     if(this.props.remove(this.props.name)){

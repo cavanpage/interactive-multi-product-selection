@@ -6,23 +6,21 @@ interface IProductOption{
 class Product{
   public options: IProductOption[] = [];  
   public selected: IProductOption[] = [];
-  public count: number = 0;
+  private choose = 3;
 
-  public choose = 3;
+  constructor(optionNames: string[], choose: number){
+    this.choose = choose;
 
-  constructor(){
-    let options: string[] =  ["French Roast", "Vanilla Nut", "Cherry", "Oak", "Mango"];
-    for(let i =0; i < options.length; i++){
+    for(let i =0; i < optionNames.length; i++){
       let flavor: IProductOption = {
-          name: options[i],
+          name: optionNames[i],
           count: 0
       };
       this.options.push(flavor);
     }
-    this.count = this.options.length;
   }
 
-  public add(option: string): boolean{
+  public add(option: string, count:number): boolean{
     var success = true;
 
     if(this.selected.length >= this.choose){
@@ -33,6 +31,7 @@ class Product{
       let selectedProduct = this.options.find(p => p.name == option);
       if(selectedProduct != undefined) {
         this.selected.push(selectedProduct);
+        selectedProduct.count = selectedProduct.count +count;
         success =  true;
       }
       else success = false;
@@ -41,7 +40,7 @@ class Product{
     return success;
   }
 
-  public remove(option: string): boolean{
+  public remove(option: string, count:number): boolean{
     var success = true;
     if(this.selected.length <= 0){
       success =  false;
@@ -49,14 +48,16 @@ class Product{
     else{   
       let selectedProduct = this.options.find(p => p.name == option);
 
-      if(selectedProduct != undefined){
-        var index = this.selected.indexOf(selectedProduct);
-        this.selected.splice(index, 1);
-        if(index == -1)success =  false;
-        else {
-          success = true;   
-          selectedProduct.count = selectedProduct.count -1;
-        }
+      if(selectedProduct != undefined){      
+
+        //remove from selected list
+        for(let i =0; i < count; i++){
+          var index = this.selected.indexOf(selectedProduct);
+          this.selected.splice(index, 1);
+        }   
+
+        selectedProduct.count = selectedProduct.count -count;
+        success = true;
       }
       else success = false;
     }

@@ -12,7 +12,7 @@ import Product from './Product';
 class App extends Component {
 
   state= {
-    product: new Product(),
+    product: new Product(["French Roast", "Vanilla Nut", "Cherry", "Oak", "Mango"], 3),
     logger: new Logger(),
     loggerEnabled: true
   }
@@ -23,52 +23,44 @@ class App extends Component {
     this.remove = this.remove.bind(this);
   }
 
-  componentDidMount(){
-    //TODO
-  };
+  // private onClick(id:number){
+  //   this.state.logger.write("card clicked: id "+id.toString());
+  // }
 
-  private onClick(id:number){
-    this.state.logger.write("card clicked: id "+id.toString());
-  }
-
-  private add(name:string): boolean{
-    var isSuccess = this.state.product.add(name);
+  private add(name:string, count: number): boolean{
+    var isSuccess = this.state.product.add(name, count);
     this.state.logger.write(this.constructor.name + ".tsx -> add('" + name + "') -> " + isSuccess);
     this.setState({
       flavors: this.state.product,
-      //logger: this.state.logger
     })
-    
     return isSuccess
   }
 
-  private remove(name:string): boolean{
-    var isSuccess = this.state.product.remove(name);
+  private remove(name:string, count: number): boolean{
+    var isSuccess = this.state.product.remove(name, count);
     this.state.logger.write(this.constructor.name + ".tsx -> remove('" + name + "') -> " + isSuccess);
     this.setState({
       flavors: this.state.product
-    })
-    
+    })   
     return isSuccess;
   }
 
   render() {
-    var parent = this;
 
-    var options = this.state.product.options.map(function(flavor, i){
+    var options = this.state.product.options.map((flavor, i) => {
       return(
-        <Card key ={"card"+i} remove={parent.remove} add={parent.add} imgSource="" name={flavor.name} clickCount={flavor.count}></Card>
+        <Card key ={"card"+i} increaseClicked={this.add} decreaseClicked={this.remove} imgSource="" name={flavor.name} clickCount={flavor.count}></Card>
+        )
+      });
+
+    var selectedOptions = this.state.product.selected.map((flavor:any, i) => {
+      return(
+        <div key ={"cardList"+ i}>{flavor.name}<b><span onClick={e => this.remove(flavor.name, 1)}> - </span></b></div>
       )
     });
 
-    var selectedOptions = this.state.product.selected.map(function(flavor:any, i){
-      return(
-        <div key ={"cardList"+ i}>{flavor.name}<b><span onClick={e => parent.remove(flavor.name)}> - </span></b></div>
-      )
-    });
-
-    var logger = this.state.logger.log.map(function(message, i){
-      if(parent.state.loggerEnabled){
+    var logger = this.state.logger.log.map((message, i) => {
+      if(this.state.loggerEnabled){
         return(      
           <div key = {"debug"+i} className="debugMessage">{message}</div>
         )
@@ -94,7 +86,6 @@ class App extends Component {
      
     );
   }
-
 }
 
 export default App;

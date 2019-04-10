@@ -5,113 +5,56 @@ import { IUser } from './interfaces';
 interface ICardProps{
     imgSource: string,
     name: string,
-    add(name: string): boolean,
-    remove(name: string): boolean,
+    increaseClicked(name: string, count: number): boolean,
+    decreaseClicked(name: string, count: number): boolean,
     clickCount:number
 }
 
 class Card extends Component<ICardProps> {
-  
-  state = {
-    clickCount:0,
-    active: false
-  }
-  
+
+  private defaultIncrement = 1;
+
   constructor(props:ICardProps){
     super(props);
-
     this.handleClick = this.handleClick.bind(this);
     this.incrementClickCount = this.incrementClickCount.bind(this);
     this.decrementClickCount = this.decrementClickCount.bind(this);
-
-    this.state={
-      clickCount: props.clickCount,
-      active: props.clickCount >0
-    }
   }
 
-  handleClick(e:any){
-    
-    var currentState = this.state.active;
-    var currentClickCount = this.state.clickCount;
-
-    if(currentState){
-      this.setState({
-        clickCount: 0
-      });
-      for(var i =0; i < currentClickCount; i++){
-        this.props.remove(this.props.name);
-      }
-      this.setState({
-        active: !this.state.active
-      })  
-      
-    }
-    else{
-      this.setState({
-        clickCount:1
-      });
-
-      if(this.props.add(this.props.name)){
-        this.setState({
-          active: !this.state.active
-        })  
-      }
-    }
-  }
-
-  componentDidUpdate(prevProps:ICardProps){
-    if(prevProps.clickCount != this.props.clickCount){
-      this.setState({
-          clickCount: this.props.clickCount,
-          active: this.props.clickCount > 0
-      })
-    }
+  handleClick(e:any){  
+    this.isActive() ? this.props.decreaseClicked(this.props.name, this.props.clickCount) : this.props.increaseClicked(this.props.name, this.defaultIncrement);
   }
 
   incrementClickCount(e:any){
       e.stopPropagation();
-
-      if(this.props.add(this.props.name)){
-        this.setState({
-          clickCount: this.state.clickCount+1
-        });
-      }
+      this.props.increaseClicked(this.props.name, this.defaultIncrement);
   }
 
   decrementClickCount(e:any){
     e.stopPropagation();
-
-    if(this.state.clickCount <= 1) {
-      this.setState({
-        active: false
-      })  
-    }
-
-    if(this.props.remove(this.props.name)){
-      this.setState({
-        clickCount: this.state.clickCount-1
-      })
-    }
+    this.props.decreaseClicked(this.props.name, this.defaultIncrement);
   }
 
   stopProp(e:any){
     e.stopPropagation();
   }
 
+  isActive(){
+    return this.props.clickCount > 0;
+  }
+
   render() {
     return (
-      <div className={this.state.active ? "variant active" : "variant"} onClick={this.handleClick}>
+      <div className={this.isActive() ? "variant active" : "variant"} onClick={this.handleClick}>
           {/* <img className="variantImage" src={this.props.imgSource} alt=""/> */}
           <div>{this.props.name}</div>
-          { this.state.active ?
+          { this.isActive() ?
           <div className="clickCountDiv" >
             <span className="minus" onClick={this.decrementClickCount}>-</span>
-            <span className="clickCount" onClick={this.stopProp}>{this.state.clickCount}</span>
+            <span className="clickCount" onClick={this.stopProp}>{this.props.clickCount}</span>
             <span className="plus" onClick={this.incrementClickCount}>+</span>
           </div>
           : null}
-
       </div>
     );
   }

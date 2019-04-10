@@ -5,70 +5,22 @@ import Grid from '@material-ui/core/Grid'
 //import myimg from './test.png';
 import './App.css';
 import { IUser } from './interfaces';
-
-class Flavors{
-  public Options: string[] = ["French Roast", "Vanilla Nut", "Cherry", "Oak", "Mango"];
-  public Selected: string[] = [];
-  public Count: number = 0;
-
-  public Choose = 3;
-
-  private Flavors(){
-    this.Count = this.Options.length;
-  }
-
-  public add(option: string): boolean{
-    var success = true;
-
-    if(this.Selected.length >= this.Choose){
-      alert("You may only choose "+ this.Choose + " flavor(s). Please unselect a flavor to choose another.")
-      success =  false;
-    }
-    else{
-      this.Selected.push(option);
-      success =  true;
-    }
-    console.log("Flavor.add("+option+") - "+this.Selected.toString());
-    return success;
-  }
-
-  public remove(option: string): boolean{
-    var success = true;
-    if(this.Selected.length <= 0){
-      success =  false;
-    }
-    else{   
-      var index = this.Selected.indexOf(option);
-      this.Selected.splice(index, 1);
-      
-      if(index == -1)success =  false;
-      else success = true;
-    }
-    console.log("Flavor.remove("+option+") - "+this.Selected.toString());
-    return success;
-  }
-}
+import { settings } from 'cluster';
+import Logger from './Logger';
+import Product from './Product';
 
 class App extends Component {
 
-  public Flavors: Flavors = new Flavors();
-
   state= {
-    flavors: Flavors
+    product: new Product(),
+    logger: new Logger(),
+    loggerEnabled: true
   }
 
   constructor(props:any){
     super(props);
-    
     this.add = this.add.bind(this);
     this.remove = this.remove.bind(this);
-  }
-
-  private randomString(length: number): string {
-    let chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    let result = '';
-    for (let i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
-    return result;
   }
 
   componentDidMount(){
@@ -76,49 +28,67 @@ class App extends Component {
   };
 
   private onClick(id:number){
-    console.log("card clicked: id "+id.toString());
+    this.state.logger.write("card clicked: id "+id.toString());
   }
 
   private add(name:string): boolean{
-    var isSuccess = this.Flavors.add(name);
+    var isSuccess = this.state.product.add(name);
+    this.state.logger.write(this.constructor.name + ".tsx -> add('" + name + "') -> " + isSuccess);
     this.setState({
-      flavors: Flavors
+      flavors: this.state.product,
+      //logger: this.state.logger
     })
-
+    
     return isSuccess
   }
 
   private remove(name:string): boolean{
-    var isSuccess = this.Flavors.remove(name);
+    var isSuccess = this.state.product.remove(name);
+    this.state.logger.write(this.constructor.name + ".tsx -> remove('" + name + "') -> " + isSuccess);
     this.setState({
-      flavors: Flavors
+      flavors: this.state.product
     })
+    
     return isSuccess;
   }
 
   render() {
     var parent = this;
 
-    var options = this.Flavors.Options.map(function(flavor){
+    var options = this.state.product.options.map(function(flavor, i){
       return(
-        <Card remove={parent.remove} add={parent.add} imgSource="" name={flavor} ></Card>
+        <Card key ={"card"+i} remove={parent.remove} add={parent.add} imgSource="" name={flavor.name} clickCount={flavor.count}></Card>
       )
     });
 
-    var selectedOptions = this.Flavors.Selected.map(function(flavor:string){
+    var selectedOptions = this.state.product.selected.map(function(flavor:any, i){
       return(
-        <div>{flavor}<b><span onClick={e => parent.remove(flavor)}> - </span></b></div>
+        <div key ={"cardList"+ i}>{flavor.name}<b><span onClick={e => parent.remove(flavor.name)}> - </span></b></div>
       )
     });
+
+    var logger = this.state.logger.log.map(function(message, i){
+      if(parent.state.loggerEnabled){
+        return(      
+          <div key = {"debug"+i} className="debugMessage">{message}</div>
+        )
+      }
+    });
+
+    var toggleLogger = <button onClick={e => this.setState({loggerEnabled: !this.state.loggerEnabled})}>Toggle Debugger</button>;
 
     return (
       <Grid container direction="row">   
-        <Grid xs={12} container >
+        <Grid xs={12} item container >
           {options}
         </Grid>
-        <Grid>
+        <Grid item xs={6}>
           <div>Selected Flavors:</div>
           {selectedOptions}
+        </Grid>
+        <Grid xs={6} item className="debugger">
+          {toggleLogger}
+          {logger}
         </Grid>
       </Grid>
      

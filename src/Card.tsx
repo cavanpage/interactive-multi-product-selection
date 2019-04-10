@@ -6,7 +6,8 @@ interface ICardProps{
     imgSource: string,
     name: string,
     add(name: string): boolean,
-    remove(name: string): boolean
+    remove(name: string): boolean,
+    clickCount:number
 }
 
 class Card extends Component<ICardProps> {
@@ -22,6 +23,11 @@ class Card extends Component<ICardProps> {
     this.handleClick = this.handleClick.bind(this);
     this.incrementClickCount = this.incrementClickCount.bind(this);
     this.decrementClickCount = this.decrementClickCount.bind(this);
+
+    this.state={
+      clickCount: props.clickCount,
+      active: props.clickCount >0
+    }
   }
 
   handleClick(e:any){
@@ -51,6 +57,15 @@ class Card extends Component<ICardProps> {
           active: !this.state.active
         })  
       }
+    }
+  }
+
+  componentDidUpdate(prevProps:ICardProps){
+    if(prevProps.clickCount != this.props.clickCount){
+      this.setState({
+          clickCount: this.props.clickCount,
+          active: this.props.clickCount > 0
+      })
     }
   }
 

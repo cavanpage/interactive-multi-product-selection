@@ -6,25 +6,24 @@ interface IProductOption{
 class Product{
   public options: IProductOption[] = [];  
   public selected: IProductOption[] = [];
-  private choose = 3;
+  private maxSelectionCount = 3;
 
-  constructor(optionNames: string[], choose: number){
-    this.choose = choose;
+  constructor(optionNames: string[], maxSelectionCount: number){
+    this.maxSelectionCount = maxSelectionCount;
 
-    for(let i =0; i < optionNames.length; i++){
-      let flavor: IProductOption = {
-          name: optionNames[i],
-          count: 0
-      };
-      this.options.push(flavor);
-    }
+    optionNames.forEach(optionName => {
+      this.options.push({
+        name: optionName,
+        count: 0
+      });
+    });        
   }
 
   public add(option: string, count:number): boolean{
     var success = true;
 
-    if(this.selected.length >= this.choose){
-      alert("You may only choose "+ this.choose + " flavor(s). Please unselect a flavor to choose another.")
+    if(this.selected.length >= this.maxSelectionCount){
+      alert("You may only choose "+ this.maxSelectionCount + " flavor(s). Please unselect a flavor to choose another.")
       success =  false;
     }
     else{
@@ -34,8 +33,7 @@ class Product{
         selectedProduct.count = selectedProduct.count +count;
         success =  true;
       }
-      else success = false;
-      
+      else success = false;    
     }
     return success;
   }

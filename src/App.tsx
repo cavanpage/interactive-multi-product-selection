@@ -9,40 +9,44 @@ import { settings } from 'cluster';
 import Logger from './Logger';
 import Product from './Product';
 
+
 class App extends Component {
 
   state= {
     product: new Product(["French Roast", "Vanilla Nut", "Cherry", "Oak", "Mango"], 3),
-    logger: new Logger(),
-    loggerEnabled: true
+    logger: new Logger()
   }
 
   constructor(props:any){
     super(props);
     this.add = this.add.bind(this);
     this.remove = this.remove.bind(this);
+    this.toggleLogger = this.toggleLogger.bind(this);
   }
 
-  // private onClick(id:number){
-  //   this.state.logger.write("card clicked: id "+id.toString());
-  // }
-
-  private add(name:string, count: number): boolean{
-    var isSuccess = this.state.product.add(name, count);
-    this.state.logger.write(this.constructor.name + ".tsx -> add('" + name + "') -> " + isSuccess);
+  private updateProduct(){
     this.setState({
-      flavors: this.state.product,
+      product: this.state.product
     })
-    return isSuccess
   }
 
-  private remove(name:string, count: number): boolean{
+  private toggleLogger(){
+    this.state.logger.enabled = !this.state.logger.enabled;
+    this.setState({
+      logger: this.state.logger
+    })
+  }
+
+  private add(name:string, count: number): void{
+    var isSuccess = this.state.product.add(name, count);
+    this.state.logger.write(this.constructor.name + ".tsx -> remove('" + name + "') -> " + isSuccess);
+    this.updateProduct();
+  }
+
+  private remove(name:string, count: number): void{
     var isSuccess = this.state.product.remove(name, count);
     this.state.logger.write(this.constructor.name + ".tsx -> remove('" + name + "') -> " + isSuccess);
-    this.setState({
-      flavors: this.state.product
-    })   
-    return isSuccess;
+    this.updateProduct();
   }
 
   render() {
@@ -60,30 +64,29 @@ class App extends Component {
     });
 
     var logger = this.state.logger.log.map((message, i) => {
-      if(this.state.loggerEnabled){
+      if(this.state.logger.enabled){
         return(      
           <div key = {"debug"+i} className="debugMessage">{message}</div>
         )
       }
     });
 
-    var toggleLogger = <button onClick={e => this.setState({loggerEnabled: !this.state.loggerEnabled})}>Toggle Debugger</button>;
+    var toggleLogger = <Grid item xs={12}><button onClick={this.toggleLogger}>Toggle Debugger</button></Grid>;
 
     return (
-      <Grid container direction="row">   
-        <Grid xs={12} item container >
-          {options}
-        </Grid>
-        <Grid item xs={6}>
-          <div>Selected Flavors:</div>
-          {selectedOptions}
-        </Grid>
-        <Grid xs={6} item className="debugger">
-          {toggleLogger}
-          {logger}
-        </Grid>
-      </Grid>
-     
+        <Grid item xs={12} container direction="row" className="myApp" spacing={32} justify="center">   
+          <Grid item xs={12} container justify="center">
+            {options}
+          </Grid>
+          <Grid item xs={6} justify="flex-start" style={{textAlign:"right"}}>
+            <div >Selected Flavors:</div>
+            {selectedOptions}
+          </Grid>
+          <Grid item xs={6} className="debugger" style={{textAlign:"left"}}>
+            {toggleLogger}
+            {logger}
+          </Grid>
+        </Grid>   
     );
   }
 }

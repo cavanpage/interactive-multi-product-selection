@@ -1,12 +1,15 @@
 interface ILogger{
     log: string[],
+    enabled: boolean,
     write(message: string): void,
+    
   }
-  class Logger implements ILogger{
+  class Logger implements ILogger{  
     public log: string[] = [];
-    public write(message:string){
+    public enabled: boolean = true;
+    public write(message:string, printToConsole :boolean = false){
       this.log.push(message);
-      console.log(message);
+      printToConsole ? console.log(message): null;
     }
   }
 

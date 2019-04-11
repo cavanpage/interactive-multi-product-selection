@@ -5,8 +5,8 @@ import { IUser } from './interfaces';
 interface ICardProps{
     imgSource: string,
     name: string,
-    increaseClicked(name: string, count: number): boolean,
-    decreaseClicked(name: string, count: number): boolean,
+    increaseClicked(name: string, count: number): void,
+    decreaseClicked(name: string, count: number): void,
     clickCount:number
 }
 

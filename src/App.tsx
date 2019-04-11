@@ -39,7 +39,7 @@ class App extends Component {
 
   private add(name:string, count: number): void{
     var isSuccess = this.state.product.add(name, count);
-    this.state.logger.write(this.constructor.name + ".tsx -> remove('" + name + "') -> " + isSuccess);
+    this.state.logger.write(this.constructor.name + ".tsx -> add('" + name + "') -> " + isSuccess);
     this.updateProduct();
   }
 

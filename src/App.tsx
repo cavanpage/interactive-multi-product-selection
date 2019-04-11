@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Card from './Card';
-import Grid from '@material-ui/core/Grid'
 //import logo from './logo.svg';
 //import myimg from './test.png';
 import './App.css';
@@ -9,6 +8,10 @@ import { settings } from 'cluster';
 import Logger from './Logger';
 import Product from './Product';
 
+
+//material
+import Grid from '@material-ui/core/Grid';
+import Icon from '@material-ui/core/Icon';
 
 class App extends Component {
 
@@ -75,7 +78,7 @@ class App extends Component {
 
     return (
         <Grid item xs={12} container direction="row" className="myApp" spacing={32} justify="center">   
-          <Grid item xs={12} container justify="center">
+          <Grid item xs={12} container justify="center" >
             {options}
           </Grid>
           <Grid item xs={6} justify="flex-start" style={{textAlign:"right"}}>

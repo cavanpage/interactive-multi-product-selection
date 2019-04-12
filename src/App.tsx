@@ -12,7 +12,13 @@ import Product from './Product';
 //material
 import Grid from '@material-ui/core/Grid';
 import Icon from '@material-ui/core/Icon';
-import Typography from '@material-ui/core/Typography'
+
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
 
 class App extends Component {
 
@@ -79,8 +85,20 @@ class App extends Component {
 
     return (
       <div >
-        <Typography align="center" variant="h4">Multi Product Selection</Typography>
-        <Grid item xs={12} container direction="row" className="myApp" spacing={32} justify="center">       
+        <AppBar position="static">
+        <Toolbar>
+          <IconButton className="classes menuButton" color="inherit" aria-label="Menu">
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" color="inherit" style={{flexGrow: 1}}>
+            Multi Product Selection
+          </Typography>
+          <Button color="inherit">Login</Button>
+        </Toolbar>
+      </AppBar>
+      <main className="myApp">
+        
+        <Grid item xs={12} container direction="row"  spacing={32} justify="center">       
           <Grid item xs={12} container justify="center" >
             {options}
           </Grid>
@@ -92,8 +110,9 @@ class App extends Component {
             {toggleLogger}
             {logger}
           </Grid>
-        </Grid>   
-        </div>
+        </Grid>  
+        </main> 
+        </div>  
     );
   }
 }

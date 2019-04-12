@@ -1,18 +1,20 @@
 import React, { Component } from 'react';
-import Grid from '@material-ui/core/Grid'
+import Grid from '@material-ui/core/Grid';
+import Button from '@material-ui/core/Button';
 import { IUser } from './interfaces';
 import Icon from '@material-ui/core/Icon';
 import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
 import RemoveCircleOutline from '@material-ui/icons/RemoveCircleOutline';
 
-
 import red from '@material-ui/core/colors/red';
-import green from '@material-ui/core/colors/green';
-import { WithStyles, createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import {createMuiTheme, WithStyles, createStyles, Theme, withStyles, MuiThemeProvider } from "@material-ui/core/styles";
 
-import { css } from '@emotion/core'
+import { css, ClassNames } from '@emotion/core'
 import classes from '*.module.sass';
 import Paper  from '@material-ui/core/Paper';
+import Typography  from '@material-ui/core/Typography';
+
+import {RedTheme, PurpleTheme} from './Themes';
 
 const styles = (theme: Theme) => createStyles({
   red: { 
@@ -24,22 +26,37 @@ const styles = (theme: Theme) => createStyles({
     margin:'10px',
 
     '&:hover': {
-      backgroundColor: green[200]
+      backgroundColor: PurpleTheme.palette.primary.light
    }
    
   },
   cardImage: { 
-    padding: '1rem',// 1rem 0px 1rem'
+    padding: '1rem',
+  },
+  cardTitle: {
+    paddingTop: '5px',
+    fontSize: '20px'
   },
   active: { 
-    backgroundColor: green[500] + '!important'
-    //boxShadow: "5px 10px " + green[500]
-    //margin:'-4px',
-    //border: "solid 4px "+ green[500],
-    
+    backgroundColor: PurpleTheme.palette.secondary.main + '!important',
+    color:"white"
   },
-});
+  counter: {
+    color:"white",
 
+    '&:hover': {
+      color:"black"
+   }
+  },
+  clickCount:{
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    fontSize: '30px',
+    color: "white"
+  }
+  
+});
 
 interface ICardProps extends WithStyles<typeof styles>{
     imgSource: string,
@@ -83,29 +100,34 @@ const DecoratedCard = withStyles(styles)(
       return this.props.clickCount > 0;
     }
 
-    activeClass(): string{
+    activeCard(): string{
       return this.isActive() ? this.props.classes.active: "";
     }
 
     render() {
+      const classes = this.props.classes;
       return (
-        <Grid item className={ this.props.classes.card + " " + this.activeClass() } onClick={this.handleClick}>       
-           <div className={this.isActive() ? "white cardTitle": "cardTitle"} > {this.props.name} </div>
-            <img className={this.props.classes.cardImage} src="https://via.placeholder.com/175" data-src="https://via.placeholder.com/150" alt=""></img>
+        <MuiThemeProvider theme={PurpleTheme}>     
+        <Grid item className={ classes.card + " " + this.activeCard() } onClick={this.handleClick}>       
+            <div className={ classes.cardTitle}> {this.props.name} </div> 
+            <img className={ classes.cardImage} src="https://via.placeholder.com/175" data-src="https://via.placeholder.com/150" alt=""></img>
             { this.isActive() ?
-            <Grid container className="clickCountDiv" >
-              <Grid item xs={5} className="plus" onClick={this.decrementClickCount}>
+           
+            <Grid container className={classes.clickCount  + " " + this.activeCard() } >
+              <Grid item xs={5} className={classes.counter}  onClick={this.decrementClickCount}>
                   <RemoveCircleOutline  style={{ fontSize: 30 }} ></RemoveCircleOutline>          
               </Grid>
-              <Grid item xs={2} className="c" onClick={this.stopProp}>
+              <Grid item xs={2} className={classes.counter} onClick={this.stopProp}>
                   <span> {this.props.clickCount} </span>
               </Grid>
-              <Grid item xs={5} className="plus" onClick={this.incrementClickCount}>
+              <Grid item xs={5} className={classes.counter}  onClick={this.incrementClickCount}>
                   <AddCircleOutline  style={{ fontSize: 30 }}  ></AddCircleOutline>
               </Grid>
             </Grid>
             : null }
         </Grid>
+        
+        </MuiThemeProvider>
       );
     }
   })

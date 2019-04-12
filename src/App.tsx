@@ -12,6 +12,7 @@ import Product from './Product';
 //material
 import Grid from '@material-ui/core/Grid';
 import Icon from '@material-ui/core/Icon';
+import Typography from '@material-ui/core/Typography'
 
 class App extends Component {
 
@@ -77,11 +78,13 @@ class App extends Component {
     var toggleLogger = <Grid item xs={12}><button onClick={this.toggleLogger}>Toggle Debugger</button></Grid>;
 
     return (
-        <Grid item xs={12} container direction="row" className="myApp" spacing={32} justify="center">   
+      <div >
+        <Typography align="center" variant="h4">Multi Product Selection</Typography>
+        <Grid item xs={12} container direction="row" className="myApp" spacing={32} justify="center">       
           <Grid item xs={12} container justify="center" >
             {options}
           </Grid>
-          <Grid item xs={6} justify="flex-start" style={{textAlign:"right"}}>
+          <Grid item xs={6} style={{textAlign:"right"}}>
             <div >Selected Flavors:</div>
             {selectedOptions}
           </Grid>
@@ -90,6 +93,7 @@ class App extends Component {
             {logger}
           </Grid>
         </Grid>   
+        </div>
     );
   }
 }
